@@ -1,0 +1,40 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.2'
+	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.graalvm.buildtools.native' version "0.10.1"
+}
+
+group = 'com'
+version = '0.0.1'
+
+java {
+	sourceCompatibility = '21'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	runtimeOnly 'org.postgresql:postgresql'
+}
+
+graalvmNative {
+	binaries {
+		named("main") {
+			imageName.set("app")
+			configurationFileDirectories.from(file("src/main/resources/META-INF/native-image"))
+			mainClass.set("com.rinha2021q1.Rinha2021q1Application")
+			buildArgs.add("--color=always")
+			buildArgs.add("--report-unsupported-elements-at-runtime")
+			buildArgs.add("--allow-incomplete-classpath")
+			buildArgs.add("--enable-preview")
+			buildArgs.add("--verbose")
+			buildArgs.add("--initialize-at-build-time=ch.qos.logback.classic.Logger,ch.qos.logback.core.status.InfoStatus,ch.qos.logback.core.util.Loader,ch.qos.logback.core.util.StatusPrinter,org.slf4j.LoggerFactory,ch.qos.logback.core.status.StatusBase,ch.qos.logback.classic.Level")
+		}
+	}
+}
